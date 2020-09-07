@@ -4,10 +4,6 @@ import struct
 def recv_data(sock, timeout=None, st=False):
     if timeout is not None:
         sock.settimeout(timeout)
-    start = 0  # just to get rid of that stupid warning
-
-    if st:
-        start = time.time()
 
     lenData = recvall(sock, 4)
 
@@ -21,18 +17,7 @@ def recv_data(sock, timeout=None, st=False):
         sock.settimeout(None)
 
     if st:
-        dtime = time.time() - start
-        perf = [(lenData + 4) * 8, dtime, 0]
-        try:
-            speed = (lenData + 4) / dtime / 1024 / 1024 * 8  # speed in Mb/s
-            speed = round(speed, 4)
-
-            perf[2] = speed
-        except ZeroDivisionError:
-            # print("Error, {} bytes recieved in {}ms".format(len(data), dtime/1000))
-            pass
-
-        return data, tuple(perf)
+        return data, lenData+4  # lenData+4 in bytes
     else:
         return data
 
